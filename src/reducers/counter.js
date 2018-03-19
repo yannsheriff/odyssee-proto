@@ -1,6 +1,8 @@
 import Immutable from 'immutable';
 
-const initialState = Immutable.Map({ counter: 0 });
+const initialState = Immutable.Map({ 
+  counter: 0 
+});
 
 const actionsMap = {
   increment(state /*, action*/) {

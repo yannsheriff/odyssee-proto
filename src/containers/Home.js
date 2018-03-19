@@ -30,12 +30,20 @@ export default class Home extends Component {
     this.props.navigation.navigate('Counter');
   };
 
+  navigateToSailing = () => {
+    this.props.navigation.navigate('Sailing');
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>Welcome to React Native Boilerplate!</Text>
         <TouchableOpacity onPress={this.toCounter}>
           <Text style={styles.instructions}>Navigate to Counter</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={this.navigateToSailing}>
+          <Text style={styles.instructions}>Navigate to Sailing</Text>
         </TouchableOpacity>
       </View>
     );
