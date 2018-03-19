@@ -4,7 +4,8 @@ import { Platform } from 'react-native';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import reducer from './reducers';
-import * as actionCreators from './actions/counter';
+import * as counterActions from './actions/counter';
+import * as sailingActions from './actions/sailing';
 
 let composeEnhancers = compose;
 if (__DEV__) {
@@ -14,7 +15,8 @@ if (__DEV__) {
     require('remote-redux-devtools').composeWithDevTools)({
     name: Platform.OS,
     ...require('../package.json').remotedev,
-    actionCreators,
+    sailingActions,
+    counterActions,
   });
   /* eslint-enable no-underscore-dangle */
 }

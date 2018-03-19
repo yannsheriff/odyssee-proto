@@ -13,21 +13,28 @@ const styles = StyleSheet.create({
 
 export default class Sailing extends Component {
   static propTypes = {
-    alert: PropTypes.func.isRequired,
-    header: PropTypes.instanceOf(Immutable.Map).isRequired,
+    // alert: PropTypes.func.isRequired,
+    sailing: PropTypes.instanceOf(Immutable.Map).isRequired,
   };
 
   constructor(props) {
     super(props);
   }
 
+  sendAlert() {
+    const { alert } = this.props;
+    console.log('ok')
+    alert()
+  }
+
 
   render() {
-    const { alert, header } = this.props;
+    const { alert, sailing } = this.props;
+    console.log(sailing)
     return (
       <View>
-        <Text style={styles.text}> { }</Text>
-        <TouchableOpacity onPress={alert}>
+        <Text style={styles.text}> { sailing.get('header') }</Text>
+        <TouchableOpacity onPress={this.sendAlert.bind(this)}>
           <Text style={styles.back}> Alert </Text>
         </TouchableOpacity>
       </View>
