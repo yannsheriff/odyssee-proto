@@ -4,6 +4,7 @@ import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Sailing from '../components/Sailing';
+import Compass from '../components/Compass';
 import * as SailingActions from '../actions/sailing';
 
 const styles = StyleSheet.create({
@@ -32,15 +33,17 @@ export default class SailingContainer extends Component {
 
   handleBack = () => {
     this.props.navigation.goBack();
-  };
+  }
 
   render() {
     return (
       <View style={styles.container}>
-        <Sailing {...this.props} />
         <TouchableOpacity onPress={this.handleBack}>
           <Text style={styles.back}>Back</Text>
         </TouchableOpacity>
+        <Sailing {...this.props} />
+        <Compass {...this.props} />
+        
       </View>
     );
   }

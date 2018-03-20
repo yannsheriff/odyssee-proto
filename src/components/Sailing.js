@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { StyleSheet, Text, View, TouchableHighlight, TouchableOpacity } from 'react-native';
 import Immutable from 'immutable';
 
+
 const styles = StyleSheet.create({
   text: {
     fontSize: 20,
