@@ -2,7 +2,23 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, Text, View, TouchableHighlight, TouchableOpacity } from 'react-native';
 import Immutable from 'immutable';
-
+import Svg,{
+  Circle,
+  Ellipse,
+  G,
+  LinearGradient,
+  RadialGradient,
+  Line,
+  Path,
+  Polygon,
+  Polyline,
+  Rect,
+  Symbol,
+  TextSvg,
+  Use,
+  Defs,
+  Stop
+} from 'react-native-svg';
 
 const styles = StyleSheet.create({
   text: {
@@ -33,12 +49,28 @@ export default class Sailing extends Component {
     const { alert, sailing } = this.props;
     console.log(sailing)
     return (
-      <View>
-        <Text style={styles.text}> { sailing.get('header') }</Text>
-        <TouchableOpacity onPress={this.sendAlert.bind(this)}>
-          <Text style={styles.back}> Alert </Text>
-        </TouchableOpacity>
-      </View>
+      <Svg
+                height="100"
+                width="100"
+            >
+                <Circle
+                    cx="50"
+                    cy="50"
+                    r="45"
+                    stroke="blue"
+                    strokeWidth="2.5"
+                    fill="green"
+                />
+                <Rect
+                    x="15"
+                    y="15"
+                    width="70"
+                    height="70"
+                    stroke="red"
+                    strokeWidth="2"
+                    fill="yellow"
+                />
+            </Svg>
     );
   }
 }
