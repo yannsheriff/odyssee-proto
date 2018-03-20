@@ -41,7 +41,7 @@ export default class SailingContainer extends Component {
         <TouchableOpacity onPress={this.handleBack}>
           <Text style={styles.back}>Back</Text>
         </TouchableOpacity>
-        <Sailing {...this.props} />
+        {/* <Sailing {...this.props} /> */}
         <Compass {...this.props} />
         
       </View>
