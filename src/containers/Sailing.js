@@ -6,13 +6,13 @@ import { connect } from 'react-redux';
 import Sailing from '../components/Sailing';
 import Compass from '../components/Compass';
 import * as SailingActions from '../actions/sailing';
+import ScreenSize from '../helpers/ScreenSize'
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#F5FCFF',
+    height: ScreenSize.height,
+    position: 'relative'
   },
   back: {
     margin: 10,
