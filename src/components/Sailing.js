@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { StyleSheet, Text, View, TouchableHighlight, TouchableOpacity } from 'react-native';
-import Immutable from 'immutable';
+import Size from '../helpers/ScreenSize'
+import Circles from './canvasComponents/circles.js'
+
 import Svg,{
   Circle,
   Ellipse,
@@ -14,63 +14,134 @@ import Svg,{
   Polyline,
   Rect,
   Symbol,
-  TextSvg,
+  Text,
   Use,
   Defs,
-  Stop
+  Stop,
+  Image
 } from 'react-native-svg';
 
-const styles = StyleSheet.create({
-  text: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-});
+const maxXOffset = 2000
+const maxYOffset = 2000
+let circles = []
+let circlesToRender = []
+for (let i=0;i<=500;i++) {
+  circles.push({
+    id: i,
+    x: Math.floor(Math.random() * maxXOffset),
+    y: Math.floor(Math.random() * maxYOffset)
+  })
+}
 
 export default class Sailing extends Component {
-  static propTypes = {
-    // alert: PropTypes.func.isRequired,
-    sailing: PropTypes.instanceOf(Immutable.Map).isRequired,
-  };
-
-  constructor(props) {
+  constructor (props) {
     super(props);
+    this.state = {
+      center: {
+        x: Size.width / 2,
+        y: Size.height / 2
+      },
+      cnv: {
+        x: -(maxXOffset / 2) - (Size.width / 2),
+        y: -(maxYOffset / 2) - (Size.height / 2),
+        prevX: 0,
+        prevY: 0
+      },
+      touch: {
+        x: 0,
+        y: 0,
+        prevX: 0,
+        prevY: 0,
+        activated: true
+      }
+    }
   }
 
-  sendAlert() {
-    const { alert } = this.props;
-    console.log('ok')
-    alert()
+  checkIfInViewport () {
+    circlesToRender = []
+    const cnvPos = this.state.cnv
+    circles.forEach((c) => {
+      if (c.x >= -cnvPos.x && c.x <= (-cnvPos.x + Size.width) && c.y >= -cnvPos.y && c.y <= (-cnvPos.y + Size.height)) {
+        circlesToRender.push(c)
+      }
+    })
   }
 
+  updateMap () {
+    if (this.state.touch.activated) {
+      this.checkIfInViewport()
+      const newX = this.state.cnv.x - 2
+      const newY = this.state.cnv.y + 2
+      this.setState({
+        cnv: {
+          x: newX,
+          y: newY
+        }
+      })
+      requestAnimationFrame(this.updateMap.bind(this))
+    }
+  }
+
+  updateTouchPos (evt) {
+    const t = this.state.touch
+    if (t.x !== t.prevX || t.y !== t.prevY) {
+      this.setState({
+        touch: {
+          x: evt.nativeEvent.pageX,
+          y: evt.nativeEvent.pageY
+        }
+      })
+    }
+  }
 
   render() {
-    const { alert, sailing } = this.props;
-    console.log(sailing)
     return (
       <Svg
-                height="100"
-                width="100"
-            >
-                <Circle
-                    cx="50"
-                    cy="50"
-                    r="45"
-                    stroke="blue"
-                    strokeWidth="2.5"
-                    fill="green"
-                />
-                <Rect
-                    x="15"
-                    y="15"
-                    width="70"
-                    height="70"
-                    stroke="red"
-                    strokeWidth="2"
-                    fill="yellow"
-                />
-            </Svg>
+        height={Size.height}
+        width={Size.width}
+        onStartShouldSetResponder = {(evt) => true}
+        onMoveShouldSetResponder = {(evt) => true}
+
+        onResponderGrant = {(evt) => {
+          console.log((maxYOffset / 2), (Size.height / 2), this.state.cnv.y)
+          this.setState({
+            touch: {
+              x: evt.nativeEvent.pageX,
+              y: evt.nativeEvent.pageY,
+              activated: true
+            }
+          })
+          requestAnimationFrame(this.updateMap.bind(this))
+        }}
+        onResponderMove = {(evt) => {
+          //this.updateTouchPos(evt)
+        }}
+        onResponderRelease= {(evt) => {
+          this.setState({
+            touch: {
+              activated: false
+            }
+          })
+        }}
+      >
+        <G
+          width={maxXOffset}
+          height={maxYOffset}
+          x={this.state.cnv.x}
+          y={this.state.cnv.y}
+        >
+          <Rect
+            x={(maxXOffset / 2) - 50}
+            y={(maxYOffset / 2) - 50}
+            width="100"
+            height="100"
+            fill="rgb(0,0,255)"
+          />
+          {/*<Circles*/}
+            {/*circlesToRender={circlesToRender}*/}
+          {/*/>*/}
+        </G>
+      </Svg>
     );
   }
 }
