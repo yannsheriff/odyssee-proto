@@ -48,6 +48,11 @@ export default class Compass extends Component {
   }
 
 
+  callbackOrientation = () => {
+    this.props.didChangeOrientation(this.state.orientation)
+  }
+
+
   componentDidMount() {
     LayoutAnimation.spring()
     const degree_update_rate = 1; // Number of degrees changed before the callback is triggered
@@ -78,7 +83,6 @@ export default class Compass extends Component {
       if (this.touchLastPos) {
         var diff = this.touchLastPos - evt.nativeEvent.pageX          
         var newOrientation = this.state.orientation + diff / 5
-        console.log(newOrientation)
         this.setState({orientation: newOrientation})
         this.touchLastPos = evt.nativeEvent.pageX  
       } else {
@@ -86,6 +90,10 @@ export default class Compass extends Component {
         this.touchLastPos = evt.nativeEvent.pageX 
       }
     }
+  }
+
+  componentDidUpdate() {
+    this.callbackOrientation()
   }
 
   render() {

@@ -42,7 +42,12 @@ export default class SailingContainer extends Component {
           <Text style={styles.back}>Back</Text>
         </TouchableOpacity>
         {/* <Sailing {...this.props} /> */}
-        <Compass {...this.props} />
+        <Compass {...this.props} 
+          didChangeOrientation={(deg) => {
+            console.log('sailging : ',deg)
+          }
+          }
+        />
         
       </View>
     );
