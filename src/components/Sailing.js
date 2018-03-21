@@ -42,10 +42,12 @@ export default class Sailing extends Component {
         y: Size.height / 2
       },
       cnv: {
-        x: -(maxXOffset / 2) - (Size.width / 2),
-        y: -(maxYOffset / 2) - (Size.height / 2),
-        prevX: 0,
-        prevY: 0
+        x: ((maxXOffset / 2) - (Size.width / 2)) * -1,
+        y: ((maxYOffset / 2) - (Size.height / 2)) * -1
+      },
+      rectPos: {
+        x: (maxYOffset / 2) - 50,
+        y: (maxYOffset / 2) - 50
       },
       touch: {
         x: 0,
@@ -71,11 +73,17 @@ export default class Sailing extends Component {
     if (this.state.touch.activated) {
       this.checkIfInViewport()
       const newX = this.state.cnv.x - 2
-      const newY = this.state.cnv.y + 2
+      const newY = this.state.cnv.y - 2
+      const newX2 = this.state.rectPos.x + 2
+      const newY2 = this.state.rectPos.y + 2
       this.setState({
         cnv: {
           x: newX,
           y: newY
+        },
+        rectPos: {
+          x: newX2,
+          y: newY2
         }
       })
       requestAnimationFrame(this.updateMap.bind(this))
@@ -103,7 +111,7 @@ export default class Sailing extends Component {
         onMoveShouldSetResponder = {(evt) => true}
 
         onResponderGrant = {(evt) => {
-          console.log((maxYOffset / 2), (Size.height / 2), this.state.cnv.y)
+          console.log(this.state.cnv.x, this.state.cnv.y, this.state.rectPos.x, this.state.rectPos.y)
           this.setState({
             touch: {
               x: evt.nativeEvent.pageX,
@@ -131,15 +139,15 @@ export default class Sailing extends Component {
           y={this.state.cnv.y}
         >
           <Rect
-            x={(maxXOffset / 2) - 50}
-            y={(maxYOffset / 2) - 50}
+            x={this.state.rectPos.x}
+            y={this.state.rectPos.y}
             width="100"
             height="100"
             fill="rgb(0,0,255)"
           />
-          {/*<Circles*/}
-            {/*circlesToRender={circlesToRender}*/}
-          {/*/>*/}
+          <Circles
+            circlesToRender={circlesToRender}
+          />
         </G>
       </Svg>
     );
