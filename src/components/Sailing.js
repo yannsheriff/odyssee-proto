@@ -36,23 +36,18 @@ for (let i=0;i<=500;i++) {
 }
 
 const speedRadius = 2
-let degRect = 45
 
 export default class Sailing extends Component {
   constructor (props) {
     super(props);
     this.state = {
       center: {
-        x: Size.width / 2,
-        y: Size.height / 2
-      },
-      cnv: {
         x: ((maxXOffset / 2) - (Size.width / 2)) * -1,
         y: ((maxYOffset / 2) - (Size.height / 2)) * -1
       },
-      rectPos: {
-        x: (maxYOffset / 2) - 50,
-        y: (maxYOffset / 2) - 50
+      cnv: {
+        x: 0,
+        y: 0
       },
       touch: {
         x: 0,
@@ -60,15 +55,16 @@ export default class Sailing extends Component {
         prevX: 0,
         prevY: 0,
         activated: true
-      }
+      },
+      deg: 0
     }
   }
 
   checkIfInViewport () {
     circlesToRender = []
     const cnvPos = this.state.cnv
-    const currentCenterX = -cnvPos.x + (Size.width / 2)
-    const currentCenterY = -cnvPos.y + (Size.height / 2)
+    const currentCenterX = -(cnvPos.x + this.state.center.x) + (Size.width / 2)
+    const currentCenterY = -(cnvPos.y + this.state.center.y) + (Size.height / 2)
 
     circles.forEach((c) => {
       const dist = Math.hypot(currentCenterX - c.x, currentCenterY - c.y)
@@ -80,22 +76,18 @@ export default class Sailing extends Component {
 
   updateMap () {
     if (this.state.touch.activated) {
-      // HERE
+      const s = this.state
 
       this.checkIfInViewport()
-      const newX = this.state.cnv.x + (speedRadius) * Math.sin(degRect * 0.0174533)
-      const newY = this.state.cnv.y + (speedRadius) * Math.cos(degRect * 0.0174533)
-      const newX2 = this.state.rectPos.x - (speedRadius) * Math.sin(degRect * 0.0174533)
-      const newY2 = this.state.rectPos.y - (speedRadius) * Math.cos(degRect * 0.0174533)
+      const newX = s.cnv.x + (speedRadius) * Math.sin(s.deg * 0.0174533)
+      const newY = s.cnv.y + (speedRadius) * Math.cos(s.deg * 0.0174533)
+      const newDeg = s.deg + 0.1
       this.setState({
         cnv: {
           x: newX,
           y: newY
         },
-        rectPos: {
-          x: newX2,
-          y: newY2
-        }
+        deg: newDeg
       })
       requestAnimationFrame(this.updateMap.bind(this))
     }
@@ -111,11 +103,6 @@ export default class Sailing extends Component {
         }
       })
     }
-  }
-
-  incrementDeg () {
-    LayoutAnimation.spring()
-    degRect = degRect + 3
   }
 
   render() {
@@ -139,7 +126,7 @@ export default class Sailing extends Component {
         onResponderMove = {(evt) => {
           //this.updateTouchPos(evt)
         }}
-        onResponderRelease= {(evt) => {
+        onResponderRelease = {(evt) => {
           this.setState({
             touch: {
               activated: false
@@ -150,27 +137,25 @@ export default class Sailing extends Component {
         <G
           width={maxXOffset}
           height={maxYOffset}
-          x={this.state.cnv.x}
-          y={this.state.cnv.y}
+          x={this.state.center.x}
+          y={this.state.center.y}
           originX={maxXOffset / 2}
           originY={maxYOffset / 2}
-          rotation={degRect}
+          rotation={this.state.deg}
           scale={1}
         >
-          <Rect
-            x={this.state.rectPos.x}
-            y={this.state.rectPos.y}
-            width="100"
-            height="100"
-            fill="rgb(0,0,255)"
-            onPress={() => {this.incrementDeg()}}
-            originX={maxXOffset / 2}
-            originY={maxYOffset / 2}
-            rotation={degRect}
-          />
-          <Circles
-            circlesToRender={circlesToRender}
-          />
+          <G
+            width={maxXOffset}
+            height={maxYOffset}
+            x={this.state.cnv.x}
+            y={this.state.cnv.y}
+            scale={1}
+          >
+            <Circles
+              circlesToRender={circlesToRender}
+              deg={this.state.deg}
+            />
+          </G>
         </G>
       </Svg>
     );

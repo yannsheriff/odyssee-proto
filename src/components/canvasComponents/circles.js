@@ -8,11 +8,14 @@ export default class circle extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      circlesToRender: this.props.circlesToRender
+      circlesToRender: this.props.circlesToRender,
+      deg: this.props.deg
     }
   }
 
   renderCircles () {
+    console.log(this.state.deg)
+    const that = this
     return this.props.circlesToRender.map((c) => {
       return (
         <Rect
@@ -23,6 +26,9 @@ export default class circle extends Component {
           height={7}
           fill="red"
           scale={1}
+          rotation={-that.props.deg}
+          originX={ c.x + 3}
+          originY={ c.y + 3}
         />
       )
     })
