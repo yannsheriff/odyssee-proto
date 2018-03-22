@@ -14,7 +14,6 @@ export default class circle extends Component {
   }
 
   renderCircles () {
-    console.log(this.state.deg)
     const that = this
     return this.props.circlesToRender.map((c) => {
       return (

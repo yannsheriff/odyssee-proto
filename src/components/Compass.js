@@ -22,7 +22,8 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   container: {
-    marginTop: 100
+    position: 'absolute',
+    top: 100
   }
 });
 
@@ -105,15 +106,14 @@ export default class Compass extends Component {
         <TouchableOpacity onPress={this._toggleCompassLock.bind(this)}>
           <Text style={styles.back}>{this.state.isCompassLocked ?  'unlock' : 'lock'}</Text>
         </TouchableOpacity>
-      <View  
-        onStartShouldSetResponder = {(evt) => true} 
-        onMoveShouldSetResponder = {(evt) => true} 
-        onResponderMove = {this.handleCompassDrag.bind(this)} 
+      <View
+        onStartShouldSetResponder = {(evt) => true}
+        onMoveShouldSetResponder = {(evt) => true}
+        onResponderMove = {this.handleCompassDrag.bind(this)}
 
         onResponderRelease= {(evt) => {
           console.log("end")
           this.touchLastPos = undefined
-          console.log(this.touchLastPos)
           this.setState({ij: 2})
         }}
 

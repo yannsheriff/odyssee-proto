@@ -27,6 +27,14 @@ const styles = StyleSheet.create({
   dispatch => bindActionCreators(SailingActions, dispatch),
 )
 export default class SailingContainer extends Component {
+  constructor (props) {
+    super(props)
+
+    this.state = {
+      orientation: 0
+    }
+  }
+
   static propTypes = {
     navigation: PropTypes.object.isRequired,
   };
@@ -35,22 +43,27 @@ export default class SailingContainer extends Component {
     this.props.navigation.goBack();
   }
 
+  _passOrientationToSailing = (deg) => {
+    if (deg !== this.state.orientation) {
+      this.setState({
+        orientation: deg
+      })
+    }
+  }
+
   render() {
     return (
       <View style={styles.container}>
-
-        <TouchableOpacity onPress={this.handleBack}>
-          <Text style={styles.back}>Back</Text>
-        </TouchableOpacity>
-        <Sailing {...this.props} />
-        <Compass {...this.props} 
-          didChangeOrientation={(deg) => {
-            console.log('sailging : ',deg)
-          }
-          }
+        <Sailing
+          {...this.props}
+          orientation={this.state.orientation}
         />
-        
+        <Compass
+          {...this.props}
+          style={{zIndex: 999}}
+          didChangeOrientation={this._passOrientationToSailing}
+        />
       </View>
-    );
+    )
   }
 }

@@ -1,32 +1,17 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import Svg,{
-  Circle,
-  Ellipse,
   G,
-  LinearGradient,
-  RadialGradient,
-  Line,
-  Path,
-  Polygon,
-  Polyline,
   Rect,
-  Symbol,
-  Text,
-  Use,
-  Defs,
-  Stop,
   Image
-} from 'react-native-svg';
+} from 'react-native-svg'
 import Size from '../helpers/ScreenSize'
 import Circles from './canvasComponents/circles'
 import boat from '../assets/Bateau.png'
 
 const maxXOffset = 20000
 const maxYOffset = 20000
-const vpRadius = Math.hypot(Size.width, Size.height) / 2
 const circles = []
-let circlesToRender = []
-for (let i=0;i<=10000;i++) {
+for (let i = 0; i <= 10000; i++) {
   circles.push({
     id: i,
     x: Math.floor(Math.random() * maxXOffset),
@@ -38,7 +23,7 @@ const speedRadius = 2
 
 export default class Sailing extends Component {
   constructor (props) {
-    super(props);
+    super(props)
     this.state = {
       center: {
         x: ((maxXOffset / 2) - (Size.width / 2)) * -1,
@@ -48,44 +33,57 @@ export default class Sailing extends Component {
         x: 0,
         y: 0
       },
-      touching: true,
-      deg: 0
+      sailing: false,
+      deg: 0,
+      vpRadius: Math.hypot(Size.width, Size.height) / 2,
+      contentToRender: []
     }
   }
 
-  checkIfInViewport () {
-    circlesToRender = []
+  componentWillReceiveProps (nextProps) {
+    this.setState({
+      deg: nextProps.orientation
+    })
+  }
+
+  _toggleSailing () {
+    this.setState({
+      sailing: !this.state.sailing
+    })
+  }
+
+  _checkIfInViewport () {
+    this.state.contentToRender = []
     const cnv = this.state.cnv
     const currentCenterX = -(cnv.x + this.state.center.x) + (Size.width / 2)
     const currentCenterY = -(cnv.y + this.state.center.y) + (Size.height / 2)
 
     circles.forEach((c) => {
       const dist = Math.hypot(currentCenterX - c.x, currentCenterY - c.y)
-      if (dist <= vpRadius) {
-        circlesToRender.push(c)
+      if (dist <= this.state.vpRadius) {
+        this.state.contentToRender.push(c)
       }
     })
   }
 
-  updateMap () {
-    if (this.state.touching) {
+  _updateMap () {
+    if (this.state.sailing) {
       const s = this.state
+      //console.log(s.deg)
 
-      this.checkIfInViewport()
+      this._checkIfInViewport()
 
       const newX = s.cnv.x + (speedRadius) * Math.sin(s.deg * 0.0174533)
       const newY = s.cnv.y + (speedRadius) * Math.cos(s.deg * 0.0174533)
-      const newDeg = s.deg + 0.1
 
       this.setState({
         cnv: {
           x: newX,
           y: newY
-        },
-        deg: newDeg
+        }
       })
 
-      requestAnimationFrame(this.updateMap.bind(this))
+      requestAnimationFrame(() => {this._updateMap()})
     }
   }
 
@@ -94,22 +92,11 @@ export default class Sailing extends Component {
       <Svg
         height={Size.height}
         width={Size.width}
-        onStartShouldSetResponder = {(evt) => true}
-        onMoveShouldSetResponder = {(evt) => true}
+        onStartShouldSetResponder = {() => true}
 
-        onResponderGrant = {(evt) => {
-          this.setState({
-            touching: true
-          })
-          requestAnimationFrame(this.updateMap.bind(this))
-        }}
-        onResponderMove = {(evt) => {
-          //this.updateTouchPos(evt)
-        }}
-        onResponderRelease = {(evt) => {
-          this.setState({
-            touching: false
-          })
+        onResponderGrant = {() => {
+          this._toggleSailing()
+          requestAnimationFrame(() => {this._updateMap()})
         }}
       >
         <G
@@ -138,7 +125,7 @@ export default class Sailing extends Component {
             scale={1}
           >
             <Circles
-              circlesToRender={circlesToRender}
+              circlesToRender={this.state.contentToRender}
               deg={this.state.deg}
             />
           </G>
