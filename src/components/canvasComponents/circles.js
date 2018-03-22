@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import Svg,{
-  Circle
+  Rect
 } from 'react-native-svg';
 
 export default class circle extends Component {
@@ -15,12 +15,14 @@ export default class circle extends Component {
   renderCircles () {
     return this.props.circlesToRender.map((c) => {
       return (
-        <Circle
+        <Rect
           key={ c.id }
-          cx={ c.x }
-          cy={ c.y }
-          r="2%"
+          x={ c.x }
+          y={ c.y }
+          width={7}
+          height={7}
           fill="red"
+          scale={1}
         />
       )
     })

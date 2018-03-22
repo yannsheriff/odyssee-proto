@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Size from '../helpers/ScreenSize'
 import Circles from './canvasComponents/circles.js'
+import { LayoutAnimation } from 'react-native'
 
 import Svg,{
   Circle,
@@ -23,6 +24,7 @@ import Svg,{
 
 const maxXOffset = 2000
 const maxYOffset = 2000
+const vpRadius = Math.hypot(Size.width, Size.height) / 2
 let circles = []
 let circlesToRender = []
 for (let i=0;i<=500;i++) {
@@ -32,6 +34,9 @@ for (let i=0;i<=500;i++) {
     y: Math.floor(Math.random() * maxYOffset)
   })
 }
+
+const speedRadius = 2
+let degRect = 45
 
 export default class Sailing extends Component {
   constructor (props) {
@@ -62,8 +67,12 @@ export default class Sailing extends Component {
   checkIfInViewport () {
     circlesToRender = []
     const cnvPos = this.state.cnv
+    const currentCenterX = -cnvPos.x + (Size.width / 2)
+    const currentCenterY = -cnvPos.y + (Size.height / 2)
+
     circles.forEach((c) => {
-      if (c.x >= -cnvPos.x && c.x <= (-cnvPos.x + Size.width) && c.y >= -cnvPos.y && c.y <= (-cnvPos.y + Size.height)) {
+      const dist = Math.hypot(currentCenterX - c.x, currentCenterY - c.y)
+      if (dist <= vpRadius) {
         circlesToRender.push(c)
       }
     })
@@ -71,11 +80,13 @@ export default class Sailing extends Component {
 
   updateMap () {
     if (this.state.touch.activated) {
+      // HERE
+
       this.checkIfInViewport()
-      const newX = this.state.cnv.x - 2
-      const newY = this.state.cnv.y - 2
-      const newX2 = this.state.rectPos.x + 2
-      const newY2 = this.state.rectPos.y + 2
+      const newX = this.state.cnv.x + (speedRadius) * Math.sin(degRect * 0.0174533)
+      const newY = this.state.cnv.y + (speedRadius) * Math.cos(degRect * 0.0174533)
+      const newX2 = this.state.rectPos.x - (speedRadius) * Math.sin(degRect * 0.0174533)
+      const newY2 = this.state.rectPos.y - (speedRadius) * Math.cos(degRect * 0.0174533)
       this.setState({
         cnv: {
           x: newX,
@@ -102,6 +113,11 @@ export default class Sailing extends Component {
     }
   }
 
+  incrementDeg () {
+    LayoutAnimation.spring()
+    degRect = degRect + 3
+  }
+
   render() {
     return (
       <Svg
@@ -111,7 +127,6 @@ export default class Sailing extends Component {
         onMoveShouldSetResponder = {(evt) => true}
 
         onResponderGrant = {(evt) => {
-          console.log(this.state.cnv.x, this.state.cnv.y, this.state.rectPos.x, this.state.rectPos.y)
           this.setState({
             touch: {
               x: evt.nativeEvent.pageX,
@@ -137,6 +152,10 @@ export default class Sailing extends Component {
           height={maxYOffset}
           x={this.state.cnv.x}
           y={this.state.cnv.y}
+          originX={maxXOffset / 2}
+          originY={maxYOffset / 2}
+          rotation={degRect}
+          scale={1}
         >
           <Rect
             x={this.state.rectPos.x}
@@ -144,6 +163,10 @@ export default class Sailing extends Component {
             width="100"
             height="100"
             fill="rgb(0,0,255)"
+            onPress={() => {this.incrementDeg()}}
+            originX={maxXOffset / 2}
+            originY={maxYOffset / 2}
+            rotation={degRect}
           />
           <Circles
             circlesToRender={circlesToRender}
