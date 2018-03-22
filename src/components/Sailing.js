@@ -1,8 +1,4 @@
 import React, { Component } from 'react';
-import Size from '../helpers/ScreenSize'
-import Circles from './canvasComponents/circles.js'
-import { LayoutAnimation } from 'react-native'
-
 import Svg,{
   Circle,
   Ellipse,
@@ -21,13 +17,16 @@ import Svg,{
   Stop,
   Image
 } from 'react-native-svg';
+import Size from '../helpers/ScreenSize'
+import Circles from './canvasComponents/circles'
+import boat from '../assets/Bateau.png'
 
-const maxXOffset = 2000
-const maxYOffset = 2000
+const maxXOffset = 20000
+const maxYOffset = 20000
 const vpRadius = Math.hypot(Size.width, Size.height) / 2
-let circles = []
+const circles = []
 let circlesToRender = []
-for (let i=0;i<=500;i++) {
+for (let i=0;i<=10000;i++) {
   circles.push({
     id: i,
     x: Math.floor(Math.random() * maxXOffset),
@@ -49,22 +48,16 @@ export default class Sailing extends Component {
         x: 0,
         y: 0
       },
-      touch: {
-        x: 0,
-        y: 0,
-        prevX: 0,
-        prevY: 0,
-        activated: true
-      },
+      touching: true,
       deg: 0
     }
   }
 
   checkIfInViewport () {
     circlesToRender = []
-    const cnvPos = this.state.cnv
-    const currentCenterX = -(cnvPos.x + this.state.center.x) + (Size.width / 2)
-    const currentCenterY = -(cnvPos.y + this.state.center.y) + (Size.height / 2)
+    const cnv = this.state.cnv
+    const currentCenterX = -(cnv.x + this.state.center.x) + (Size.width / 2)
+    const currentCenterY = -(cnv.y + this.state.center.y) + (Size.height / 2)
 
     circles.forEach((c) => {
       const dist = Math.hypot(currentCenterX - c.x, currentCenterY - c.y)
@@ -75,13 +68,15 @@ export default class Sailing extends Component {
   }
 
   updateMap () {
-    if (this.state.touch.activated) {
+    if (this.state.touching) {
       const s = this.state
 
       this.checkIfInViewport()
+
       const newX = s.cnv.x + (speedRadius) * Math.sin(s.deg * 0.0174533)
       const newY = s.cnv.y + (speedRadius) * Math.cos(s.deg * 0.0174533)
       const newDeg = s.deg + 0.1
+
       this.setState({
         cnv: {
           x: newX,
@@ -89,19 +84,8 @@ export default class Sailing extends Component {
         },
         deg: newDeg
       })
-      requestAnimationFrame(this.updateMap.bind(this))
-    }
-  }
 
-  updateTouchPos (evt) {
-    const t = this.state.touch
-    if (t.x !== t.prevX || t.y !== t.prevY) {
-      this.setState({
-        touch: {
-          x: evt.nativeEvent.pageX,
-          y: evt.nativeEvent.pageY
-        }
-      })
+      requestAnimationFrame(this.updateMap.bind(this))
     }
   }
 
@@ -115,11 +99,7 @@ export default class Sailing extends Component {
 
         onResponderGrant = {(evt) => {
           this.setState({
-            touch: {
-              x: evt.nativeEvent.pageX,
-              y: evt.nativeEvent.pageY,
-              activated: true
-            }
+            touching: true
           })
           requestAnimationFrame(this.updateMap.bind(this))
         }}
@@ -128,9 +108,7 @@ export default class Sailing extends Component {
         }}
         onResponderRelease = {(evt) => {
           this.setState({
-            touch: {
-              activated: false
-            }
+            touching: false
           })
         }}
       >
@@ -144,6 +122,14 @@ export default class Sailing extends Component {
           rotation={this.state.deg}
           scale={1}
         >
+          <Rect
+            width={maxXOffset}
+            height={maxYOffset}
+            x={0}
+            y={0}
+            scale={1}
+            fill="#0071e9"
+          />
           <G
             width={maxXOffset}
             height={maxYOffset}
@@ -157,6 +143,15 @@ export default class Sailing extends Component {
             />
           </G>
         </G>
+        <Image
+          x={(Size.width / 2) - 50}
+          y={-(Size.height / 2) + 94.46}
+          width="100"
+          height="189.9"
+          preserveAspectRatio="xMidYMid slice"
+          opacity="1"
+          href={boat}
+        />
       </Svg>
     );
   }
