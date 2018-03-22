@@ -38,8 +38,18 @@ export default class SailingContainer extends Component {
   render() {
     return (
       <View style={styles.container}>
+
+        <TouchableOpacity onPress={this.handleBack}>
+          <Text style={styles.back}>Back</Text>
+        </TouchableOpacity>
         <Sailing {...this.props} />
-        <Compass {...this.props} />
+        <Compass {...this.props} 
+          didChangeOrientation={(deg) => {
+            console.log('sailging : ',deg)
+          }
+          }
+        />
+        
       </View>
     );
   }
