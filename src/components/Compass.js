@@ -58,6 +58,7 @@ export default class Compass extends Component {
     LayoutAnimation.spring()
     const degree_update_rate = 1; // Number of degrees changed before the callback is triggered
     RNSimpleCompass.start(degree_update_rate, (degree) => {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
       this.setState({orientation: degree})
       // RNSimpleCompass.stop(); 
     });
